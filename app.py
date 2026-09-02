@@ -15,7 +15,7 @@ tokenizer = T5Tokenizer.from_pretrained("./saved_summary_model")
 # device
 if torch.backends.mps.is_available():
     device = torch.device("mps")
-elif torch.cuda.is_availanle():
+elif torch.cuda.is_available():
     device = torch.device("cuda")
 else:
     device = torch.device("cpu")
@@ -69,4 +69,6 @@ async def summarize(dialogue_input: DialogueInput):
 
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+    # return templates.TemplateResponse("index.html", {"request": request})
+    # To this:
+    return templates.TemplateResponse(request=request, name="index.html")

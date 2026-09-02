@@ -1,79 +1,189 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Text Summarizer</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #FFF7ED;
-            color: #333;
+        * {
+            box-sizing: border-box;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
+
+        /* 🔒 1. Body को पूरी तरह लॉक किया ताकि स्क्रीन बाउंस/स्क्रॉल न हो */
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            margin: 0;
+            padding: 16px;
+            height: 100vh;
+            height: 100dvh;
+            /* Mobile browser height fix */
+            width: 100vw;
+            overflow: hidden;
+            /* Prevent body scroll/bounce */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #FFF7ED 0%, #FFEDD5 100%);
+            color: #1E293B;
+        }
+
+        /* 📦 2. Container की Max Height फिक्स की और अंदर Scrollbar लगाया */
         .container {
+            width: 100%;
             max-width: 600px;
-            margin: 50px auto;
-            padding: 20px;
-            background: #fff;
+            max-height: 90vh;
+            /* Screen से बाहर नहीं जाएगा */
+            overflow-y: auto;
+            /* अंदर का कंटेंट स्क्रॉल होगा */
+            padding: 32px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 20px 25px -5px rgba(251, 146, 60, 0.1),
+                0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            animation: fadeInSlideUp 0.6s ease-out;
+        }
+
+        /* 🎨 3. (Optional) Container के अंदर वाले स्क्रॉलबार को क्लीन बनाने के लिए */
+        .container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .container::-webkit-scrollbar-thumb {
+            background: #FED7AA;
             border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .container::-webkit-scrollbar-thumb:hover {
+            background: #FB923C;
         }
 
         h1 {
             text-align: center;
-            color: #FB923C;
+            color: #EA580C;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-top: 0;
+            margin-bottom: 8px;
+            letter-spacing: -0.025em;
         }
 
         h3 {
             text-align: center;
-            margin-top: -20px;
-            margin-bottom: 40px;
+            color: #9A3412;
+            font-size: 0.95rem;
+            font-weight: 500;
+            margin-top: 0;
+            margin-bottom: 28px;
+            opacity: 0.8;
         }
 
         form {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 18px;
         }
 
         textarea {
-            height: 150px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 16px;
+            width: 100%;
+            height: 140px;
+            padding: 16px;
+            border: 2px solid #FED7AA;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 15px;
+            color: #334155;
+            background: #FFFFFF;
+            resize: vertical;
+            outline: none;
+            resize: none;
+        }
+
+        textarea:focus {
+            border-color: #FB923C;
+            box-shadow: 0 0 0 4px rgba(251, 146, 60, 0.15);
         }
 
         button {
-            background-color: #FB923C;
-            color: white;
+            background: linear-gradient(135deg, #FB923C 0%, #EA580C 100%);
+            color: #FFFFFF;
             border: none;
-            padding: 10px 15px;
+            padding: 14px 20px;
             font-size: 16px;
+            font-weight: 600;
             cursor: pointer;
-            border-radius: 5px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(234, 88, 12, 0.25);
         }
 
         button:hover {
-            background-color: #F97316;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(234, 88, 12, 0.35);
+        }
+
+        button:active {
+            transform: translateY(0);
         }
 
         #summary-output {
-            margin-top: 20px;
-            background: #FFEDD5;
-            padding: 15px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
+            margin-top: 24px;
+            background: #FFF7ED;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #FFEDD5;
+            border-left: 4px solid #EA580C;
+            animation: fadeIn 0.4s ease-in-out;
         }
 
         #summary-heading {
-            margin-top: 0px;
-            margin-bottom: 0px;
+            margin-top: 0;
+            margin-bottom: 8px;
+            color: #C2410C;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        /* Animations */
+        @keyframes fadeInSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+                max-height: 95vh;
+            }
+
+            h1 {
+                font-size: 1.6rem;
+            }
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h1>Text Summarizer</h1>
@@ -94,38 +204,39 @@
     <script>
         document.getElementById("summarization-form").addEventListener("submit", async (e) => {
             e.preventDefault();
-        
+
             const dialogueInput = document.getElementById("dialogue-input");
             const summaryText = document.getElementById("summary-text");
             const submitButton = e.target.querySelector("button");
-        
+
             const dialogue = dialogueInput.value.trim();
             if (!dialogue) return;
-        
+
             summaryText.innerText = "Processing...";
             submitButton.disabled = true;
-        
+
             try {
                 const response = await fetch("/summarize/", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ dialogue }),
                 });
-        
+
                 if (!response.ok) {
                     throw new Error(`Server error: ${response.status}`);
                 }
-        
+
                 const data = await response.json();
                 summaryText.innerText = data.summary || "No summary returned.";
             } catch (err) {
-                
+
                 summaryText.innerText = `Error: ${err.message}`;
             } finally {
-                
+
                 submitButton.disabled = false;
             }
         });
     </script>
 </body>
+
 </html>
